@@ -73,4 +73,6 @@ jobs:
 
             echo ">>> Status & logs"
             docker ps -a --filter "name=re-shopping-cart-web-app"
-            docker logs -f re-shopping-cart-web-app
+            echo ">>> Showing last 50 lines of logs"
+            docker logs --tail 50 re-shopping-cart-web-app
+            echo ">>> Deployment completed successfully!"
