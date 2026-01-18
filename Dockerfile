@@ -8,6 +8,13 @@ COPY gradle/ gradle/
 COPY build.gradle settings.gradle ./
 COPY gradlew* ./
 
+# Verify gradle wrapper files are copied
+RUN echo "=== Verifying gradle wrapper ===" && \
+    ls -la gradle/wrapper/ && \
+    test -f gradle/wrapper/gradle-wrapper.properties && \
+    test -f gradle/wrapper/gradle-wrapper.jar && \
+    echo "Gradle wrapper files OK"
+
 # Fix line endings and set executable permission
 RUN sed -i 's/\r$//' gradlew && \
     chmod +x gradlew && \

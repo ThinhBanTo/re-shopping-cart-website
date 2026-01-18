@@ -24,8 +24,7 @@ HELP.md
 # Build outputs
 build/
 .gradle
-gradle/
-!gradle/wrapper/gradle-wrapper.jar
+# Note: gradle/wrapper/ is needed for Docker build, so we don't ignore it
 
 # Environment files (will be provided at runtime)
 .env
