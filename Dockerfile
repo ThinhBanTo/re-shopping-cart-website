@@ -3,17 +3,24 @@ FROM gradle:8.5-jdk21 AS build
 
 WORKDIR /app
 
-# Copy Gradle wrapper and build files
+# Copy Gradle wrapper and build files first (for better caching)
 COPY gradle/ gradle/
 COPY build.gradle settings.gradle ./
-COPY gradlew ./
-RUN chmod +x gradlew
+COPY gradlew* ./
+
+# Fix line endings and set executable permission
+RUN sed -i 's/\r$//' gradlew && \
+    chmod +x gradlew && \
+    ls -la gradlew
 
 # Copy source code
 COPY src/ src/
 
-# Build the application
-RUN ./gradlew clean build -x test --no-daemon
+# Build the application with stacktrace for debugging
+RUN ./gradlew clean build -x test --no-daemon --stacktrace
+
+# Verify JAR file was created
+RUN ls -la build/libs/ || (echo "JAR file not found!" && exit 1)
 
 # Runtime stage
 FROM eclipse-temurin:21-jre-alpine
