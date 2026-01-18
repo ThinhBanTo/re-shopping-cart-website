@@ -1,0 +1,50 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+README.md
+*.md
+HELP.md
+
+# IDE
+.idea
+.vscode
+*.iml
+*.iws
+*.ipr
+.classpath
+.project
+.settings
+.apt_generated
+.factorypath
+.sts4-cache
+
+# Build outputs
+build/
+.gradle
+gradle/
+gradlew
+gradlew.bat
+!gradle/wrapper/gradle-wrapper.jar
+
+# Environment files (will be provided at runtime)
+.env
+.env.local
+.env.prod
+
+# CI/CD
+.github/
+ci-cd.yaml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Test files
+src/test/
