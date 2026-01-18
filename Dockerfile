@@ -16,11 +16,20 @@ RUN sed -i 's/\r$//' gradlew && \
 # Copy source code
 COPY src/ src/
 
-# Build the application with stacktrace for debugging
-RUN ./gradlew clean build -x test --no-daemon --stacktrace
+# Build the application
+# Using --stacktrace and --info for detailed error messages
+RUN ./gradlew clean build -x test --no-daemon --stacktrace --info || \
+    (echo "=== BUILD FAILED ===" && \
+     echo "=== Checking build directory ===" && \
+     ls -la build/ || true && \
+     echo "=== Checking for error logs ===" && \
+     find . -name "*.log" -type f | head -5 | xargs cat || true && \
+     exit 1)
 
 # Verify JAR file was created
-RUN ls -la build/libs/ || (echo "JAR file not found!" && exit 1)
+RUN echo "=== Checking JAR files ===" && \
+    ls -la build/libs/ && \
+    find build/libs -name "*.jar" || (echo "JAR file not found!" && exit 1)
 
 # Runtime stage
 FROM eclipse-temurin:21-jre-alpine
