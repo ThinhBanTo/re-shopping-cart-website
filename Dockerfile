@@ -11,20 +11,30 @@ COPY gradlew* ./
 # Fix line endings and set executable permission
 RUN sed -i 's/\r$//' gradlew && \
     chmod +x gradlew && \
-    ls -la gradlew
+    ls -la gradlew && \
+    echo "=== Testing gradlew ===" && \
+    ./gradlew --version
 
 # Copy source code
 COPY src/ src/
 
-# Build the application
-# Using --stacktrace and --info for detailed error messages
-RUN ./gradlew clean build -x test --no-daemon --stacktrace --info || \
-    (echo "=== BUILD FAILED ===" && \
-     echo "=== Checking build directory ===" && \
-     ls -la build/ || true && \
-     echo "=== Checking for error logs ===" && \
-     find . -name "*.log" -type f | head -5 | xargs cat || true && \
-     exit 1)
+# Verify files are copied correctly
+RUN echo "=== Verifying source files ===" && \
+    find src -type f -name "*.java" | head -5 && \
+    ls -la build.gradle settings.gradle
+
+# Build the application step by step for better error visibility
+RUN echo "=== Starting Gradle build ===" && \
+    ./gradlew clean --no-daemon --stacktrace
+
+RUN echo "=== Compiling Java code ===" && \
+    ./gradlew compileJava --no-daemon --stacktrace
+
+RUN echo "=== Processing resources ===" && \
+    ./gradlew processResources --no-daemon --stacktrace
+
+RUN echo "=== Building JAR ===" && \
+    ./gradlew bootJar --no-daemon --stacktrace
 
 # Verify JAR file was created
 RUN echo "=== Checking JAR files ===" && \
